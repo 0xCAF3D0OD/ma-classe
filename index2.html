@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Notre classe — 9B</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,900;1,9..144,500&family=Mulish:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#f6efe1;
+    --paper-2:#efe6d3;
+    --ink:#1f1a15;
+    --ink-soft:#5a5044;
+    --accent:#e2502b;
+    --accent-2:#2f6b4f;
+    --tape:rgba(226,80,43,.18);
+    --shadow:rgba(31,26,21,.18);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:'Mulish',system-ui,sans-serif;
+    color:var(--ink);
+    background:var(--paper);
+    background-image:
+      radial-gradient(circle at 12% 18%, rgba(226,80,43,.06), transparent 40%),
+      radial-gradient(circle at 88% 72%, rgba(47,107,79,.07), transparent 42%);
+    line-height:1.55;
+    overflow-x:hidden;
+  }
+  /* subtle paper grain */
+  body::before{
+    content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.5;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  }
+  .wrap{position:relative;z-index:1;max-width:1080px;margin:0 auto;padding:0 24px}
+
+  /* NAV */
+  nav{display:flex;justify-content:space-between;align-items:center;padding:26px 0;}
+  .brand{font-family:'Fraunces',serif;font-weight:900;font-size:1.3rem;letter-spacing:-.02em}
+  .brand span{color:var(--accent)}
+  .navlinks{display:flex;gap:22px;font-weight:600;font-size:.95rem}
+  .navlinks a{color:var(--ink);text-decoration:none;opacity:.75;transition:.2s}
+  .navlinks a:hover{opacity:1;color:var(--accent)}
+  @media(max-width:620px){.navlinks{display:none}}
+
+  /* HERO */
+  .hero{padding:48px 0 60px;position:relative}
+  .kicker{font-weight:700;text-transform:uppercase;letter-spacing:.22em;font-size:.78rem;color:var(--accent)}
+  .hero h1{
+    font-family:'Fraunces',serif;font-weight:900;line-height:.95;letter-spacing:-.03em;
+    font-size:clamp(3rem,11vw,7rem);margin:14px 0 18px;
+  }
+  .hero h1 em{font-style:italic;color:var(--accent-2)}
+  .hero p{max-width:520px;font-size:1.15rem;color:var(--ink-soft)}
+  .hero .stamp{
+    position:absolute;top:40px;right:0;font-family:'Fraunces',serif;font-weight:600;font-style:italic;
+    border:2px solid var(--accent);color:var(--accent);border-radius:50%;
+    width:118px;height:118px;display:grid;place-items:center;text-align:center;
+    transform:rotate(-12deg);font-size:.85rem;padding:10px;line-height:1.15;
+  }
+  @media(max-width:620px){.hero .stamp{display:none}}
+
+  /* SECTION TITLES */
+  .sec{padding:46px 0}
+  .sec-head{display:flex;align-items:baseline;gap:14px;margin-bottom:26px}
+  .sec-head h2{font-family:'Fraunces',serif;font-weight:900;font-size:clamp(1.7rem,5vw,2.6rem);letter-spacing:-.02em}
+  .sec-head .num{font-family:'Fraunces',serif;font-style:italic;color:var(--accent);font-size:1.1rem}
+
+  /* MOMENTS */
+  .moments{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  @media(max-width:760px){.moments{grid-template-columns:1fr}}
+  .moment{
+    background:var(--paper-2);border:1px solid rgba(31,26,21,.1);border-radius:16px;padding:24px;
+    transition:transform .25s, box-shadow .25s;
+  }
+  .moment:hover{transform:translateY(-4px);box-shadow:0 14px 30px var(--shadow)}
+  .moment .emo{font-size:2rem;display:block;margin-bottom:10px}
+  .moment h3{font-family:'Fraunces',serif;font-weight:600;font-size:1.25rem;margin-bottom:6px}
+  .moment p{color:var(--ink-soft);font-size:.96rem}
+
+  /* GALLERY */
+  .gallery{display:flex;flex-wrap:wrap;gap:26px;justify-content:flex-start}
+  .polaroid{
+    background:#fff;padding:12px 12px 44px;border-radius:4px;
+    box-shadow:0 10px 24px var(--shadow);position:relative;width:210px;
+    transition:transform .25s;
+  }
+  .polaroid:nth-child(odd){transform:rotate(-2.5deg)}
+  .polaroid:nth-child(even){transform:rotate(2deg)}
+  .polaroid:hover{transform:rotate(0) scale(1.03);z-index:5}
+  .polaroid::before{
+    content:"";position:absolute;top:-12px;left:50%;transform:translateX(-50%) rotate(-3deg);
+    width:84px;height:26px;background:var(--tape);border:1px dashed rgba(226,80,43,.4);
+  }
+  .polaroid .pic{height:180px;border-radius:2px;display:grid;place-items:center;font-size:2.6rem;overflow:hidden}
+  .polaroid img{width:100%;height:100%;object-fit:cover;border-radius:2px}
+  .polaroid .cap{font-family:'Fraunces',serif;font-style:italic;text-align:center;margin-top:12px;font-size:1rem}
+  .g1{background:linear-gradient(135deg,#f4a259,#e2502b)}
+  .g2{background:linear-gradient(135deg,#6db9a3,#2f6b4f)}
+  .g3{background:linear-gradient(135deg,#8aa9d6,#3a5a8c)}
+  .g4{background:linear-gradient(135deg,#e8c468,#caa12e)}
+
+  .addphoto{
+    width:210px;min-height:236px;border:2px dashed rgba(31,26,21,.28);border-radius:6px;
+    background:transparent;cursor:pointer;display:grid;place-items:center;gap:8px;
+    font-family:'Mulish';font-weight:700;color:var(--ink-soft);transition:.2s;text-align:center;padding:14px;
+  }
+  .addphoto:hover{border-color:var(--accent);color:var(--accent);background:rgba(226,80,43,.04)}
+  .addphoto .plus{font-size:2.4rem;line-height:1}
+
+  /* WALL / FORM */
+  .wallgrid{display:grid;grid-template-columns:340px 1fr;gap:34px;align-items:start}
+  @media(max-width:760px){.wallgrid{grid-template-columns:1fr}}
+  .card-form{background:var(--paper-2);border:1px solid rgba(31,26,21,.1);border-radius:18px;padding:26px}
+  .card-form label{display:block;font-weight:700;font-size:.85rem;margin:14px 0 6px;text-transform:uppercase;letter-spacing:.05em}
+  .card-form input,.card-form textarea{
+    width:100%;padding:11px 13px;border:1.5px solid rgba(31,26,21,.2);border-radius:10px;
+    font-family:'Mulish';font-size:.98rem;background:#fff;color:var(--ink);resize:vertical;
+  }
+  .card-form input:focus,.card-form textarea:focus{outline:none;border-color:var(--accent)}
+  .btn{
+    margin-top:18px;width:100%;padding:13px;border:none;border-radius:10px;cursor:pointer;
+    background:var(--accent);color:#fff;font-family:'Mulish';font-weight:700;font-size:1rem;
+    transition:.2s;letter-spacing:.02em;
+  }
+  .btn:hover{background:#c5421f;transform:translateY(-1px)}
+  .wall{display:flex;flex-direction:column;gap:14px}
+  .note{
+    background:#fff;border-left:4px solid var(--accent-2);border-radius:6px;padding:14px 16px;
+    box-shadow:0 6px 16px var(--shadow);animation:pop .35s ease both;
+  }
+  .note .who{font-family:'Fraunces',serif;font-weight:600;font-size:1.05rem}
+  .note .msg{color:var(--ink-soft);font-size:.96rem;margin-top:3px}
+  @keyframes pop{from{opacity:0;transform:translateY(8px) scale(.98)}to{opacity:1;transform:none}}
+
+  /* honest hint */
+  .hint{
+    display:inline-flex;align-items:center;gap:8px;margin-top:18px;font-size:.85rem;
+    color:var(--ink-soft);background:rgba(47,107,79,.1);border:1px solid rgba(47,107,79,.25);
+    padding:8px 13px;border-radius:20px;
+  }
+  .hint b{color:var(--accent-2)}
+
+  footer{padding:50px 0 40px;text-align:center;color:var(--ink-soft);font-size:.9rem;border-top:1px solid rgba(31,26,21,.12);margin-top:40px}
+  footer .heart{color:var(--accent)}
+
+  /* load reveal */
+  .reveal{opacity:0;transform:translateY(18px);animation:rise .7s ease forwards}
+  @keyframes rise{to{opacity:1;transform:none}}
+  .d1{animation-delay:.05s}.d2{animation-delay:.15s}.d3{animation-delay:.25s}.d4{animation-delay:.35s}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <nav class="reveal d1">
+    <div class="brand">Notre<span>Classe</span>.</div>
+    <div class="navlinks">
+      <a href="#moments">Nos moments</a>
+      <a href="#galerie">Galerie</a>
+      <a href="#mur">Le mur</a>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="stamp reveal d4">Année<br>2025–2026</div>
+    <div class="kicker reveal d1">École obligatoire · Classe 9B</div>
+    <h1 class="reveal d2">Ce qu'on a<br><em>vécu</em> ensemble.</h1>
+    <p class="reveal d3">Notre voyage d'école, nos meilleurs fous rires, le match contre la 9A… On a tout rassemblé ici pour s'en souvenir.</p>
+  </header>
+
+  <section class="sec" id="moments">
+    <div class="sec-head"><span class="num reveal d1">01 —</span><h2 class="reveal d2">Nos meilleurs moments</h2></div>
+    <div class="moments">
+      <div class="moment reveal d2"><span class="emo">🏔️</span><h3>La course d'école</h3><p>Deux jours en montagne, des cloques aux pieds et un coucher de soleil inoubliable.</p></div>
+      <div class="moment reveal d3"><span class="emo">⚽</span><h3>Le tournoi inter-classes</h3><p>On a perdu en finale… mais on a gagné le prix de la meilleure ambiance.</p></div>
+      <div class="moment reveal d4"><span class="emo">🎭</span><h3>Le spectacle de Noël</h3><p>Le sketch de la prof de maths restera dans les annales.</p></div>
+    </div>
+  </section>
+
+  <section class="sec" id="galerie">
+    <div class="sec-head"><span class="num">02 —</span><h2>La galerie</h2></div>
+    <div class="gallery" id="gallery">
+      <figure class="polaroid"><div class="pic g1">🏔️</div><figcaption class="cap">Sommet, 9h12</figcaption></figure>
+      <figure class="polaroid"><div class="pic g2">⚽</div><figcaption class="cap">La finale</figcaption></figure>
+      <figure class="polaroid"><div class="pic g3">🎒</div><figcaption class="cap">Départ du car</figcaption></figure>
+      <figure class="polaroid"><div class="pic g4">🎉</div><figcaption class="cap">Dernier jour</figcaption></figure>
+      <button class="addphoto" id="addBtn">
+        <span class="plus">+</span>
+        Ajouter une photo
+      </button>
+      <input type="file" id="fileInput" accept="image/*" hidden>
+    </div>
+    <div class="hint">🛈 <span>Démo : la photo s'affiche <b>le temps de la visite</b>. Sur un vrai site simple, on l'ajoute en modifiant la page puis en la republiant.</span></div>
+  </section>
+
+  <section class="sec" id="mur">
+    <div class="sec-head"><span class="num">03 —</span><h2>Le mur de la classe</h2></div>
+    <div class="wallgrid">
+      <div class="card-form">
+        <label for="who">Ton prénom</label>
+        <input type="text" id="who" placeholder="Léa, Noah, …" maxlength="20">
+        <label for="msg">Ton souvenir préféré</label>
+        <textarea id="msg" rows="3" placeholder="Mon meilleur moment, c'était…" maxlength="160"></textarea>
+        <button class="btn" id="postBtn">Ajouter au mur ✏️</button>
+      </div>
+      <div class="wall" id="wall">
+        <div class="note"><div class="who">Maya</div><div class="msg">Le moment où on s'est tous perdus en montagne et qu'on a chanté pour ne pas avoir peur. 😂</div></div>
+        <div class="note"><div class="who">Tom</div><div class="msg">Le but à la dernière minute du tournoi. Frissons garantis.</div></div>
+      </div>
+    </div>
+    <div class="hint">🛈 <span>Démo : les messages restent <b>le temps de la visite</b>. Pour <b>vraiment</b> garder des inscriptions, il faudrait un serveur — on s'en passe pour rester simple et protéger les données.</span></div>
+  </section>
+
+  <footer>
+    Fait avec <span class="heart">♥</span> par la classe 9B · Page de démonstration
+  </footer>
+
+</div>
+
+<script>
+  // --- Ajouter une photo (session uniquement, aucune sauvegarde) ---
+  const addBtn = document.getElementById('addBtn');
+  const fileInput = document.getElementById('fileInput');
+  const gallery = document.getElementById('gallery');
+  const grads = ['g1','g2','g3','g4'];
+
+  addBtn.addEventListener('click', () => fileInput.click());
+
+  fileInput.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const fig = document.createElement('figure');
+      fig.className = 'polaroid';
+      fig.innerHTML = '<div class="pic"><img alt="photo ajoutée" src="'+ev.target.result+'"></div><figcaption class="cap">Nouvelle photo</figcaption>';
+      gallery.insertBefore(fig, addBtn);
+    };
+    reader.readAsDataURL(file);
+    fileInput.value = '';
+  });
+
+  // --- Mur de la classe (session uniquement, aucune sauvegarde) ---
+  const postBtn = document.getElementById('postBtn');
+  const who = document.getElementById('who');
+  const msg = document.getElementById('msg');
+  const wall = document.getElementById('wall');
+
+  function escapeHtml(s){return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+
+  postBtn.addEventListener('click', () => {
+    const n = who.value.trim();
+    const m = msg.value.trim();
+    if(!n || !m){ postBtn.textContent = 'Remplis les deux champs 👀'; setTimeout(()=>postBtn.textContent='Ajouter au mur ✏️',1500); return; }
+    const note = document.createElement('div');
+    note.className = 'note';
+    note.innerHTML = '<div class="who">'+escapeHtml(n)+'</div><div class="msg">'+escapeHtml(m)+'</div>';
+    wall.insertBefore(note, wall.firstChild);
+    who.value=''; msg.value='';
+  });
+</script>
+</body>
+</html>
