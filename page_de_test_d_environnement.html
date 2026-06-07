@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Testeur d'Environnement Web interactif</title>
+    <!-- Chargement de Tailwind CSS pour un design moderne ultra-rapide -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Bibliothèque d'icônes Lucide pour des visuels propres -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @keyframes pulse-slow {
+            0%, 100% { transform: scale(1); opacity: 0.2; }
+            50% { transform: scale(1.05); opacity: 0.4; }
+        }
+        .animate-pulse-slow {
+            animation: pulse-slow 8s infinite ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen font-sans flex flex-col justify-between selection:bg-indigo-500 selection:text-white overflow-x-hidden">
+
+    <!-- Arrière-plan stylé avec gradients animés -->
+    <div class="absolute inset-0 overflow-hidden pointer-events-none z-0">
+        <div class="absolute -top-[40%] -left-[20%] w-[80vw] h-[80vw] rounded-full bg-indigo-900/20 blur-[120px] animate-pulse-slow"></div>
+        <div class="absolute -bottom-[20%] -right-[20%] w-[60vw] h-[60vw] rounded-full bg-emerald-900/10 blur-[100px] animate-pulse-slow" style="animation-delay: -4s;"></div>
+    </div>
+
+    <!-- Conteneur principal -->
+    <main class="relative z-10 max-w-6xl w-full mx-auto px-4 py-8 md:py-16 flex-grow flex flex-col justify-center gap-8">
+        
+        <!-- En-tête de la page -->
+        <header class="text-center space-y-4">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 text-sm font-medium animate-bounce">
+                <i data-lucide="check-circle-2" class="w-4 h-4"></i>
+                Environnement Prêt à Tester
+            </div>
+            <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400">
+                Diagnostic Environnemental
+            </h1>
+            <p class="text-slate-400 max-w-2xl mx-auto text-base md:text-lg">
+                Utilisez les modules ci-dessous pour vérifier que le rendu HTML, les styles CSS, l'exécution JavaScript et les API de votre navigateur fonctionnent de manière optimale.
+            </p>
+        </header>
+
+        <!-- Section Grille de Tests -->
+        <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            
+            <!-- Carte 1: Test d'Interactivité JS & State -->
+            <div class="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 backdrop-blur-md flex flex-col justify-between hover:border-indigo-500/50 transition-all duration-300 group">
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="p-3 bg-indigo-500/10 text-indigo-400 rounded-xl group-hover:scale-110 transition-transform">
+                            <i data-lucide="mouse-pointer-click" class="w-6 h-6"></i>
+                        </span>
+                        <span class="text-xs font-semibold px-2 py-1 bg-emerald-500/10 text-emerald-400 rounded">JavaScript</span>
+                    </div>
+                    <h2 class="text-xl font-bold mb-2">Compteur de Clics</h2>
+                    <p class="text-slate-400 text-sm mb-4">Teste la réactivité de l'état local et la mise à jour dynamique du DOM au clic.</p>
+                </div>
+                <div class="space-y-4">
+                    <div class="bg-slate-950 rounded-xl p-4 text-center border border-slate-800">
+                        <span id="click-counter" class="text-3xl font-black text-indigo-400">0</span>
+                        <span class="text-slate-500 block text-xs uppercase tracking-wider mt-1">Clics enregistrés</span>
+                    </div>
+                    <button id="btn-count" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-3 px-4 rounded-xl transition duration-200 shadow-lg shadow-indigo-600/20 active:scale-95 flex items-center justify-center gap-2">
+                        <span>Incrémenter</span>
+                        <i data-lucide="plus" class="w-4 h-4"></i>
+                    </</button>
+                </div>
+            </div>
+
+            <!-- Carte 2: Test Audio (Web Audio API) -->
+            <div class="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 backdrop-blur-md flex flex-col justify-between hover:border-pink-500/50 transition-all duration-300 group">
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="p-3 bg-pink-500/10 text-pink-400 rounded-xl group-hover:scale-110 transition-transform">
+                            <i data-lucide="music" class="w-6 h-6"></i>
+                        </span>
+                        <span class="text-xs font-semibold px-2 py-1 bg-emerald-500/10 text-emerald-400 rounded">Web Audio</span>
+                    </div>
+                    <h2 class="text-xl font-bold mb-2">Synthétiseur Audio</h2>
+                    <p class="text-slate-400 text-sm mb-4">Génère des ondes sonores pures par code pour tester la carte son de votre système.</p>
+                </div>
+                <div class="space-y-3">
+                    <div class="flex gap-2 justify-center">
+                        <button onclick="playTone(261.63, 'C')" class="flex-1 py-2 bg-slate-800 hover:bg-pink-600 text-white text-xs font-bold rounded-lg transition active:scale-95">DO</button>
+                        <button onclick="playTone(293.66, 'D')" class="flex-1 py-2 bg-slate-800 hover:bg-pink-600 text-white text-xs font-bold rounded-lg transition active:scale-95">RÉ</button>
+                        <button onclick="playTone(329.63, 'E')" class="flex-1 py-2 bg-slate-800 hover:bg-pink-600 text-white text-xs font-bold rounded-lg transition active:scale-95">MI</button>
+                        <button onclick="playTone(392.00, 'G')" class="flex-1 py-2 bg-slate-800 hover:bg-pink-600 text-white text-xs font-bold rounded-lg transition active:scale-95">SOL</button>
+                    </div>
+                    <p class="text-[10px] text-center text-slate-500 italic">Cliquez sur une note pour générer un son dynamique (Sinusoïde, 0.3s)</p>
+                </div>
+            </div>
+
+            <!-- Carte 3: Notification & Clipboard -->
+            <div class="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 backdrop-blur-md flex flex-col justify-between hover:border-emerald-500/50 transition-all duration-300 group">
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="p-3 bg-emerald-500/10 text-emerald-400 rounded-xl group-hover:scale-110 transition-transform">
+                            <i data-lucide="bell" class="w-6 h-6"></i>
+                        </span>
+                        <span class="text-xs font-semibold px-2 py-1 bg-amber-500/10 text-amber-400 rounded">API Navigateur</span>
+                    </div>
+                    <h2 class="text-xl font-bold mb-2">Toast & Clipboard</h2>
+                    <p class="text-slate-400 text-sm mb-4">Copie des données fictives et déclenche un toast UI personnalisé pour valider le moteur d'affichage.</p>
+                </div>
+                <div class="space-y-3">
+                    <div class="relative">
+                        <input id="clipboard-text" type="text" readonly value="https://mon-env-fonctionne.ok" class="w-full bg-slate-950 border border-slate-800 rounded-xl py-2 px-3 text-xs text-slate-300 pr-10 focus:outline-none">
+                        <button onclick="copyToClipboard()" class="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-emerald-400 p-1 rounded transition">
+                            <i data-lucide="copy" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                    <button onclick="showToast('Diagnostic copié !')" class="w-full bg-slate-800 hover:bg-slate-700 text-emerald-400 border border-emerald-500/20 py-2 rounded-xl text-sm font-medium transition active:scale-95">
+                        Lancer une alerte Toast
+                    </button>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- Section 4: Performance du Canvas (Test CPU/GPU 2D) -->
+        <section class="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 backdrop-blur-md hover:border-violet-500/30 transition-colors duration-300">
+            <div class="flex flex-col lg:flex-row gap-6 items-center">
+                <div class="lg:w-1/3 space-y-4">
+                    <div class="flex items-center gap-2">
+                        <span class="p-2 bg-violet-500/10 text-violet-400 rounded-lg">
+                            <i data-lucide="cpu" class="w-5 h-5"></i>
+                        </span>
+                        <h2 class="text-xl font-bold">Bac à Sable de Particules</h2>
+                    </div>
+                    <p class="text-slate-400 text-sm leading-relaxed">
+                        Bouge ton curseur ou tape sur le canvas ci-contre pour générer des particules physiques en temps réel. Ce test évalue la fluidité de votre moteur de rendu 2D Canvas ainsi que les calculs physiques de base.
+                    </p>
+                    <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 grid grid-cols-2 gap-4">
+                        <div class="text-center">
+                            <span id="fps-counter" class="text-2xl font-black text-violet-400">--</span>
+                            <span class="text-slate-500 block text-[10px] uppercase">FPS actuel</span>
+                        </div>
+                        <div class="text-center">
+                            <span id="particle-counter" class="text-2xl font-black text-violet-400">0</span>
+                            <span class="text-slate-500 block text-[10px] uppercase">Particules</span>
+                        </div>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="resetParticles()" class="flex-1 bg-slate-800 hover:bg-slate-700 text-xs font-semibold py-2 rounded-lg transition">Vider</button>
+                        <button id="btn-toggle-gravity" onclick="toggleGravity()" class="flex-1 bg-violet-900/30 text-violet-300 hover:bg-violet-900/50 text-xs font-semibold py-2 rounded-lg transition border border-violet-800/30">Gravité : Activée</button>
+                    </div>
+                </div>
+                
+                <!-- Zone Canvas Interactive -->
+                <div class="lg:w-2/3 w-full h-[280px] md:h-[350px] bg-slate-950 rounded-xl relative border border-slate-800 overflow-hidden cursor-crosshair">
+                    <canvas id="sandbox-canvas" class="absolute inset-0 w-full h-full"></canvas>
+                    <div class="absolute bottom-3 left-3 bg-slate-900/80 backdrop-blur border border-slate-700/50 px-3 py-1 rounded-full text-[10px] text-slate-400 pointer-events-none">
+                        Cliquez/Survolez pour interagir
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Pied de page -->
+    <footer class="relative z-10 w-full text-center py-6 text-xs text-slate-500 border-t border-slate-900 bg-slate-950/80 backdrop-blur-sm">
+        <div class="max-w-6xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4">
+            <p>© 2026 Testeur d'Environnement Virtuel. Fait avec passion.</p>
+            <div class="flex items-center gap-4">
+                <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span> Moteur Prêt</span>
+                <span class="text-slate-700">|</span>
+                <button onclick="testSystemSpecs()" class="hover:text-indigo-400 transition flex items-center gap-1"><i data-lucide="info" class="w-3.5 h-3.5"></i> Specs Système</button>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Toast Notification Overlay -->
+    <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-12 opacity-0 pointer-events-none transition-all duration-300 ease-out">
+        <div class="bg-indigo-600 text-white px-5 py-3 rounded-xl shadow-2xl flex items-center gap-3 border border-indigo-400/20">
+            <span class="p-1 bg-white/20 rounded-full">
+                <i data-lucide="info" class="w-4 h-4"></i>
+            </span>
+            <span id="toast-message" class="text-sm font-semibold">Message du système</span>
+        </div>
+    </div>
+
+    <!-- Script de logique globale -->
+    <script>
+        // Initialisation globale des icônes Lucide
+        lucide.createIcons();
+
+        // --- SECTION 1 : COMPTEUR ---
+        const counterEl = document.getElementById('click-counter');
+        const btnCount = document.getElementById('btn-count');
+        let clicks = 0;
+
+        btnCount.addEventListener('click', () => {
+            clicks++;
+            counterEl.innerText = clicks;
+            // Petit feedback de scale
+            counterEl.classList.remove('scale-100');
+            counterEl.classList.add('scale-110', 'text-pink-400');
+            setTimeout(() => {
+                counterEl.classList.remove('scale-110', 'text-pink-400');
+            }, 100);
+            
+            // Lancer quelques particules sur le canvas en même temps !
+            const canvasRect = canvas.getBoundingClientRect();
+            spawnParticles(canvas.width / 2, canvas.height / 2, 8);
+        });
+
+        // --- SECTION 2 : AUDIO API ---
+        let audioCtx = null;
+        function playTone(freq, noteName) {
+            try {
+                // Initialise le contexte audio au premier clic utilisateur (requis par les navigateurs modernes)
+                if (!audioCtx) {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+
+                osc.type = 'sine'; // Forme d'onde sinusoïdale
+                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+
+                // Enveloppe d'amplitude (attaque/relâchement pour éviter les clics)
+                gain.gain.setValueAtTime(0, audioCtx.currentTime);
+                gain.gain.linearRampToValueAtTime(0.3, audioCtx.currentTime + 0.05); // Volume à 30%
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.4);
+
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                osc.start(audioCtx.currentTime);
+                osc.stop(audioCtx.currentTime + 0.4);
+
+                showToast(`Note ${noteName} jouée : ${freq}Hz`);
+            } catch (e) {
+                console.error("Échec du Web Audio API:", e);
+                showToast("Erreur Audio: Non supporté ou bloqué.");
+            }
+        }
+
+        // --- SECTION 3 : TOAST ET PRESSE-PAPIER ---
+        function copyToClipboard() {
+            const input = document.getElementById('clipboard-text');
+            // Solution recommandée de secours iFrame compatible
+            input.select();
+            input.setSelectionRange(0, 99999);
+            try {
+                document.execCommand('copy');
+                showToast("URL copiée dans le presse-papier !");
+            } catch (err) {
+                showToast("Erreur lors de la copie.");
+            }
+        }
+
+        let toastTimeout;
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toast-message');
+            
+            toastMsg.innerText = message;
+            
+            // Reset state
+            clearTimeout(toastTimeout);
+            toast.classList.remove('translate-y-12', 'opacity-0', 'pointer-events-none');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            toastTimeout = setTimeout(() => {
+                toast.classList.add('translate-y-12', 'opacity-0', 'pointer-events-none');
+                toast.classList.remove('translate-y-0', 'opacity-100');
+            }, 2500);
+        }
+
+        function testSystemSpecs() {
+            const agent = navigator.userAgent;
+            const cores = navigator.hardwareConcurrency || "Inconnu";
+            const memory = navigator.deviceMemory ? `${navigator.deviceMemory} Go approx.` : "Inconnue";
+            showToast(`Processeurs : ${cores} coeurs | Ram : ${memory}`);
+        }
+
+        // --- SECTION 4 : CANVAS DE PARTICULES & FRAME RATE ---
+        const canvas = document.getElementById('sandbox-canvas');
+        const ctx = canvas.getContext('2d');
+        const fpsCounter = document.getElementById('fps-counter');
+        const particleCounter = document.getElementById('particle-counter');
+
+        let particles = [];
+        let gravity = true;
+        let lastTime = performance.now();
+        let frames = 0;
+        let fps = 0;
+
+        // Redimensionnement fluide
+        function resizeCanvas() {
+            const rect = canvas.parentNode.getBoundingClientRect();
+            canvas.width = rect.width;
+            canvas.height = rect.height;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class Particle {
+            constructor(x, y, vx, vy) {
+                this.x = x;
+                this.y = y;
+                this.vx = vx || (Math.random() - 0.5) * 6;
+                this.vy = vy || (Math.random() - 0.5) * 6;
+                this.size = Math.random() * 4 + 2;
+                this.hue = Math.random() * 60 + 260; // Violet, Rose, Indigo hues
+                this.alpha = 1;
+                this.decay = Math.random() * 0.015 + 0.005;
+            }
+
+            update() {
+                if (gravity) {
+                    this.vy += 0.15; // Petite constante gravitationnelle
+                }
+                this.x += this.vx;
+                this.y += this.vy;
+                this.alpha -= this.decay;
+
+                // Rebondissement sur les bords horizontaux
+                if (this.x - this.size < 0 || this.x + this.size > canvas.width) {
+                    this.vx *= -0.8;
+                    this.x = this.x < canvas.width / 2 ? this.size : canvas.width - this.size;
+                }
+                // Rebondissement sur le sol ou plafond
+                if (this.y - this.size < 0 || this.y + this.size > canvas.height) {
+                    this.vy *= -0.7;
+                    this.y = this.y < canvas.height / 2 ? this.size : canvas.height - this.size;
+                }
+            }
+
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = this.alpha;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = `hsla(${this.hue}, 85%, 65%, ${this.alpha})`;
+                ctx.shadowBlur = 8;
+                ctx.shadowColor = `hsl(${this.hue}, 85%, 65%)`;
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        function spawnParticles(x, y, count) {
+            for (let i = 0; i < count; i++) {
+                particles.push(new Particle(x, y));
+            }
+            if (particles.length > 300) {
+                particles.splice(0, particles.length - 300); // Garder un plafond pour éviter de saturer
+            }
+        }
+
+        function resetParticles() {
+            particles = [];
+            showToast("Bac à sable réinitialisé");
+        }
+
+        function toggleGravity() {
+            gravity = !gravity;
+            const btn = document.getElementById('btn-toggle-gravity');
+            if (gravity) {
+                btn.innerText = "Gravité : Activée";
+                btn.className = "flex-1 bg-violet-950/50 text-violet-300 hover:bg-violet-900/50 text-xs font-semibold py-2 rounded-lg transition border border-violet-800/30";
+            } else {
+                btn.innerText = "Gravité : Désactivée";
+                btn.className = "flex-1 bg-slate-800 text-slate-400 hover:bg-slate-700 text-xs font-semibold py-2 rounded-lg transition border border-slate-700/30";
+            }
+            showToast(gravity ? "Gravité activée" : "Gravité sans poids");
+        }
+
+        // Événements souris & touch sur Canvas
+        let isPointerDown = false;
+
+        function getMousePos(e) {
+            const rect = canvas.getBoundingClientRect();
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            return {
+                x: clientX - rect.left,
+                y: clientY - rect.top
+            };
+        }
+
+        function handlePointerMove(e) {
+            const pos = getMousePos(e);
+            spawnParticles(pos.x, pos.y, 1);
+        }
+
+        canvas.addEventListener('mousedown', (e) => {
+            isPointerDown = true;
+            const pos = getMousePos(e);
+            spawnParticles(pos.x, pos.y, 15);
+        });
+
+        canvas.addEventListener('mousemove', (e) => {
+            if (isPointerDown) {
+                handlePointerMove(e);
+            }
+        });
+
+        window.addEventListener('mouseup', () => isPointerDown = false);
+
+        // Version Mobile / Tactile
+        canvas.addEventListener('touchstart', (e) => {
+            const pos = getMousePos(e);
+            spawnParticles(pos.x, pos.y, 15);
+        });
+        canvas.addEventListener('touchmove', (e) => {
+            handlePointerMove(e);
+        });
+
+        // Boucle d'animation principale
+        function drawLoop(currentTime) {
+            // Nettoyage avec légère traînée
+            ctx.fillStyle = 'rgba(2, 6, 23, 0.25)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Mise à jour et rendu des particules
+            particles.forEach((p, index) => {
+                p.update();
+                p.draw();
+                if (p.alpha <= 0) {
+                    particles.splice(index, 1);
+                }
+            });
+
+            // Mise à jour des compteurs UI
+            particleCounter.innerText = particles.length;
+
+            // Calcul des FPS
+            frames++;
+            if (currentTime >= lastTime + 1000) {
+                fps = Math.round((frames * 1000) / (currentTime - lastTime));
+                fpsCounter.innerText = fps;
+                
+                // Indicateur de performance visuel
+                if (fps >= 55) {
+                    fpsCounter.className = "text-2xl font-black text-emerald-400";
+                } else if (fps >= 30) {
+                    fpsCounter.className = "text-2xl font-black text-amber-400";
+                } else {
+                    fpsCounter.className = "text-2xl font-black text-red-500";
+                }
+
+                frames = 0;
+                lastTime = currentTime;
+            }
+
+            requestAnimationFrame(drawLoop);
+        }
+
+        // Lancement après chargement du DOM
+        window.onload = function() {
+            resizeCanvas();
+            requestAnimationFrame(drawLoop);
+        }
+    </script>
+</body>
+</html>
