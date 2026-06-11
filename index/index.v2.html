@@ -82,8 +82,8 @@
 
         /* Custom style pattern with dark overlay to preserve text contrast */
         .bg-pattern {
-            /* background-image: linear-gradient(rgba(10, 5, 5, 0.82), rgba(10, 5, 5, 0.82)), url('https://images.unsplash.com/photo-1607988795691-3d0147b43231?q=80&w=2000'); */
-	    background-image: url('./assets/bg.jpg');
+            /*background-image: linear-gradient(rgba(10, 5, 5, 0.82), rgba(10, 5, 5, 0.82)), url('https://images.unsplash.com/photo-1607988795691-3d0147b43231?q=80&w=2000');*/
+	    background-image: url('./bg.jpg');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
@@ -205,7 +205,7 @@
                     <ul class="text-font text-base text-[#e0e0e0] list-disc list-inside space-y-1">
                         <li>Start with <span class="text-green-400 font-bold">3 Hearts (Lives)</span></li>
                         <li>Incorrect answer damages 1 heart</li>
-                        <li>Continuous progression to victory</li>
+                        <li>Continuous progression to Level 20</li>
                     </ul>
                 </button>
 
@@ -226,11 +226,11 @@
             <!-- Funny Description -->
             <div class="bg-[#2e1f15] p-3 mc-border border-[#4e3422] text-left text-font text-lg text-[#e0e0e0] leading-relaxed">
                 <span class="text-yellow-400">Survival Guide:</span>
-                Solve <strong class="text-white"><span class="total-q-placeholder">20</span> random questions</strong> out of 150+ challenges correctly to conquer the run. Keep your water bucket ready!
+                Solve <strong class="text-white">20 random questions</strong> out of 150+ challenges correctly to conquer the run. Keep your water bucket ready!
             </div>
 
             <!-- Player Username Setup -->
-            <div class="text-left space-y-2">
+            <div class="text-left space--2">
                 <label for="username" class="pixel-font text-xs text-[#aaa] block">GamerTag / Nickname:</label>
                 <input type="text" id="username" maxlength="15" placeholder="Steve" 
                        class="w-full mc-input p-3 pixel-font text-sm uppercase" value="Steve">
@@ -347,7 +347,7 @@
                 🏆 VICTORY!
             </h1>
             <p class="pixel-font text-[10px] md:text-xs text-[#55ff55]">
-                YOU SURVIVED <span class="total-q-placeholder">20</span> LEVELS OF TRIVIA SURVIVAL!
+                YOU SURVIVED 20 LEVELS OF TRIVIA SURVIVAL!
             </p>
 
             <div class="flex justify-center my-4">
@@ -369,7 +369,7 @@
                 <p>⚔️ Mode Cleared: <span id="victory-mode" class="text-green-400 font-bold uppercase">Normal</span></p>
                 <p>🏹 Survival Hearts: <span id="victory-hearts" class="text-red-500">❤️ ❤️ ❤️</span></p>
                 <p>🧪 Knowledge Rank: <span class="text-[#55ffff]" id="victory-rank">Redstone Arch-Mage</span></p>
-                <p>👾 Questions Answered: <span class="text-green-400" id="victory-q-count">20 / 20</span></p>
+                <p>👾 Questions Answered: <span class="text-green-400">20 / 20</span></p>
             </div>
 
             <div class="bg-[#241c18] p-3 text-[10px] sm:text-xs text-[#ffaa00] pixel-font">
@@ -395,13 +395,6 @@
 
     <!-- Sound & Game Engines Code -->
     <script>
-        // ==========================================
-        //  ⚙️ CENTRAL CONFIGURATION
-        // ==========================================
-
-	// Change this variable to adjust total levels!
-        const TOTAL_QUESTIONS_TO_PLAY = Math.floor(Math.random() * 91) + 10;
-
         // --- 150+ MINECRAFT QUESTIONS POOL ---
         const QUESTIONS_POOL = [
             {
@@ -551,9 +544,9 @@
             {
                 q: "What is the Ender Dragon's official canonical name?",
                 options: [
-                    { text: "Jean?", isCorrect: true },
-                    { text: "Elizabeth III", isCorrect: false },
-                    { text: "Bob the Scaly", isCorrect: false }
+                    { text: "Jean.", isCorrect: true },
+                    { text: "Elizabeth III.", isCorrect: false },
+                    { text: "Bob the Scaly.", isCorrect: false }
                 ],
                 joke: "Yes! The Ender Dragon is canonically female and named Jean."
             },
@@ -2035,6 +2028,7 @@
 
         // --- GAME STATE ---
         let currentQuestions = [];
+	let QUESTION_NUMBER = 100;
         let currentIndex = 0;
         let username = "Steve";
         let isMuted = false;
@@ -2227,14 +2221,6 @@
             showScreen('screen-welcome');
         }
 
-        // --- INITIALIZE STATIC PLACEHOLDERS ON LOAD ---
-        function initPlaceholders() {
-            const placeholders = document.querySelectorAll('.total-q-placeholder');
-            placeholders.forEach(el => {
-                el.innerText = TOTAL_QUESTIONS_TO_PLAY;
-            });
-        }
-
         // --- GAME OPERATIONS ---
         function startGame() {
             playSound('click');
@@ -2255,9 +2241,9 @@
                 document.getElementById('mode-badge').className = "pixel-font text-[9px] text-[#ff5555] ml-1";
             }
 
-            // Draw total random questions from our pool of 150+ based on TOTAL_QUESTIONS_TO_PLAY
+            // Draw 20 random questions from our pool of 150+
             const shuffledPool = shuffleArray([...QUESTIONS_POOL]);
-            currentQuestions = shuffledPool.slice(0, TOTAL_QUESTIONS_TO_PLAY);
+            currentQuestions = shuffledPool.slice(0, QUESTION_NUMBER);
             
             currentIndex = 0;
 
@@ -2275,7 +2261,7 @@
             const currentQ = currentQuestions[currentIndex];
             
             // Set stats
-            document.getElementById('level-indicator').innerText = `Level: ${currentIndex + 1}/${TOTAL_QUESTIONS_TO_PLAY}`;
+            document.getElementById('level-indicator').innerText = `Level: ${currentIndex + 1}/${QUESTION_NUMBER}`;
             document.getElementById('question-text').innerText = currentQ.q;
             
             // Randomly update narrator bubble for immersive Minecraft commentary
@@ -2316,7 +2302,7 @@
             });
 
             // Update Progress Bar
-            const percentage = (currentIndex / TOTAL_QUESTIONS_TO_PLAY) * 100;
+            const percentage = (currentIndex / QUESTION_NUMBER) * 100;
             document.getElementById('xp-fill').style.width = `${percentage}%`;
             document.getElementById('xp-percentage').innerText = `${Math.round(percentage)}%`;
         }
@@ -2373,7 +2359,7 @@
             randomTombstone = randomTombstone.replace("[Q]", (currentIndex + 1).toString());
 
             document.getElementById('death-msg').innerText = randomTombstone;
-            document.getElementById('death-level').innerText = `Defeated on Level ${currentIndex + 1} of ${TOTAL_QUESTIONS_TO_PLAY} in ${activeMode.toUpperCase()} mode.`;
+            document.getElementById('death-level').innerText = `Defeated on Level ${currentIndex + 1} of ${QUESTION_NUMBER} in ${activeMode.toUpperCase()} mode.`;
 
             showScreen('screen-death');
         }
@@ -2383,7 +2369,6 @@
             
             document.getElementById('victory-user').innerText = username;
             document.getElementById('victory-mode').innerText = activeMode;
-            document.getElementById('victory-q-count').innerText = `${TOTAL_QUESTIONS_TO_PLAY} / ${TOTAL_QUESTIONS_TO_PLAY}`;
             
             // Render remaining hearts on victory screen
             const victoryHeartsElem = document.getElementById('victory-hearts');
@@ -2431,11 +2416,6 @@
                 container.appendChild(p);
             }
         }
-
-        // --- INITIAL RUN ---
-        window.addEventListener('DOMContentLoaded', () => {
-            initPlaceholders();
-        });
     </script>
 </body>
 </html>

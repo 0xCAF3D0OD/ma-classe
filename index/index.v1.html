@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minecraft Quiz - Hardcore Mode</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Retro Pixel Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+    <style>
+        .pixel-font {
+            font-family: 'Press Start 2P', monospace;
+        }
+        .text-font {
+            font-family: 'VT323', monospace;
+        }
+        
+        /* Minecraft block borders */
+        .mc-border {
+            border: 4px solid black;
+            image-rendering: pixelated;
+        }
+
+        /* Pixel art button styling */
+        .mc-btn {
+            border: 4px solid #000;
+            background-color: #8c8c8c;
+            box-shadow: inset -4px -4px 0px #5a5a5a, inset 4px 4px 0px #c0c0c0;
+            transition: all 0.1s ease;
+        }
+        .mc-btn:hover {
+            background-color: #a0a0a0;
+            box-shadow: inset -4px -4px 0px #6e6e6e, inset 4px 4px 0px #dcdcdc;
+        }
+        .mc-btn:active {
+            box-shadow: inset 4px 4px 0px #5a5a5a, inset -4px -4px 0px #c0c0c0;
+            transform: translateY(2px);
+        }
+
+        .mc-btn-green {
+            background-color: #5c8e32;
+            box-shadow: inset -4px -4px 0px #3c5f21, inset 4px 4px 0px #8dd051;
+        }
+        .mc-btn-green:hover {
+            background-color: #6da73b;
+            box-shadow: inset -4px -4px 0px #456d26, inset 4px 4px 0px #a2e664;
+        }
+        .mc-btn-green:active {
+            box-shadow: inset 4px 4px 0px #3c5f21, inset -4px -4px 0px #8dd051;
+        }
+
+        .mc-btn-red {
+            background-color: #b92e2e;
+            box-shadow: inset -4px -4px 0px #791b1b, inset 4px 4px 0px #e05a5a;
+        }
+        .mc-btn-red:hover {
+            background-color: #cc3b3b;
+            box-shadow: inset -4px -4px 0px #8e2323, inset 4px 4px 0px #ef7474;
+        }
+        .mc-btn-red:active {
+            box-shadow: inset 4px 4px 0px #791b1b, inset -4px -4px 0px #e05a5a;
+        }
+
+        /* Minecraft styled panel (dirt/wood texture approximation) */
+        .mc-panel {
+            background-color: rgba(43, 31, 25, 0.95);
+            border: 6px solid #1a110e;
+            box-shadow: inset -6px -6px 0px #120b0a, inset 6px 6px 0px #423027, 0 10px 25px rgba(0,0,0,0.5);
+        }
+
+        .mc-input {
+            background-color: #000;
+            color: #55ff55;
+            border: 4px solid #5a5a5a;
+            box-shadow: inset 4px 4px 0px #212121;
+        }
+        .mc-input:focus {
+            border-color: #ffffff;
+            outline: none;
+        }
+
+        /* Custom dirt pattern backup */
+        .bg-pattern {
+/*            background-image: linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.65)), url('https://images.unsplash.com/photo-1607988795691-3d0147b43231?q=80&w=2000'); */
+            background-image: url('/bg.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        /* Hearts styling */
+        .heart {
+            width: 26px;
+            height: 24px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            display: inline-block;
+            image-rendering: pixelated;
+        }
+
+        /* XP bar */
+        .xp-bar-bg {
+            background-color: #1a1a1a;
+            border: 3px solid #5d5d5d;
+        }
+        .xp-bar-fill {
+            background-color: #55ff55;
+            box-shadow: 0 0 8px #55ff55;
+        }
+
+        /* Red "YOU DIED" screen effect */
+        .death-overlay {
+            background-color: rgba(130, 0, 0, 0.85);
+            animation: redFlash 0.5s ease-out forwards;
+        }
+
+        @keyframes redFlash {
+            0% { background-color: rgba(255, 0, 0, 1); }
+            100% { background-color: rgba(100, 5, 5, 0.9); }
+        }
+
+        /* Shaking animation on wrong answer */
+        .shake {
+            animation: shakeEffect 0.4s ease-in-out;
+        }
+        @keyframes shakeEffect {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-10px); }
+            40%, 80% { transform: translateX(10px); }
+        }
+
+        /* Floating particles for victory */
+        .sparkle {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background-color: #ffff55;
+            pointer-events: none;
+            animation: floatAway 2s linear infinite;
+        }
+        @keyframes floatAway {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(-100px) rotate(360deg); opacity: 0; }
+        }
+    </style>
+</head>
+<body class="bg-pattern min-h-screen text-white flex items-center justify-center p-4 relative overflow-hidden select-none">
+
+    <!-- Ambient Floating Clouds for Minecraft atmosphere -->
+    <div class="absolute inset-0 pointer-events-none opacity-20 overflow-hidden">
+        <div class="absolute bg-white h-8 w-32 rounded top-12 left-[-150px] animate-[slide_45s_linear_infinite]"></div>
+        <div class="absolute bg-white h-12 w-48 rounded top-1/4 left-[-200px] animate-[slide_60s_linear_infinite_10s]"></div>
+        <div class="absolute bg-white h-10 w-40 rounded top-2/3 left-[-180px] animate-[slide_50s_linear_infinite_5s]"></div>
+    </div>
+
+    <style>
+        @keyframes slide {
+            0% { left: -250px; }
+            100% { left: 100%; }
+        }
+    </style>
+
+    <!-- MAIN SOUND CONTROL -->
+    <button onclick="toggleMute()" id="mute-btn" class="absolute top-4 right-4 mc-btn p-2 flex items-center justify-center z-50 text-white" title="Toggle Sound">
+        <span class="pixel-font text-xs" id="mute-icon">🔊 SOUND ON</span>
+    </button>
+
+    <!-- ================= GAME CONTAINER ================= -->
+    <div id="game-card" class="w-full max-w-2xl mc-panel p-6 md:p-8 rounded-none relative transition-all duration-300">
+        
+        <!-- ================= SCREEN 1: WELCOME SCREEN ================= -->
+        <div id="screen-welcome" class="text-center space-y-6">
+            <!-- Game Logo Style Title -->
+            <div class="relative py-4">
+                <h1 class="pixel-font text-2xl md:text-4xl text-[#ffff55] tracking-widest drop-shadow-[4px_4px_0px_#3f3f00] uppercase animate-pulse">
+                    Minecraft Quiz
+                </h1>
+                <p class="pixel-font text-[10px] md:text-xs text-[#ff5555] mt-2 tracking-wide">
+                    WARNING: HARDCORE MODE ACTIVATED!
+                </p>
+            </div>
+
+            <!-- Funny Description -->
+            <div class="bg-[#2e1f15] p-4 mc-border border-[#4e3422] text-left text-font text-lg md:text-xl text-[#e0e0e0] space-y-2 leading-relaxed">
+                <p class="text-yellow-400">Survival Guide:</p>
+                <p>⛏️ Answer <strong class="text-white">10 random questions</strong> correctly to reach safety.</p>
+                <p>💥 Make <strong class="text-[#ff5555]">ONE MISTAKE</strong> and your hardcore run ends instantly!</p>
+                <p>🐮 Standard physics do not apply. Keep your pickaxe ready.</p>
+            </div>
+
+            <!-- Player Username Setup -->
+            <div class="text-left space-y-2">
+                <label for="username" class="pixel-font text-xs text-[#aaa] block">Enter GamerTag:</label>
+                <input type="text" id="username" maxlength="15" placeholder="Steve" 
+                       class="w-full mc-input p-3 pixel-font text-sm uppercase" value="Steve">
+            </div>
+
+            <!-- Start Button -->
+            <button onclick="startGame()" class="w-full mc-btn mc-btn-green py-4 pixel-font text-sm md:text-base text-white tracking-wider cursor-pointer">
+                LAUNCH RUN
+            </button>
+            
+            <p class="text-font text-sm text-[#777] italic">"Always obey rule #1: Never dig straight down."</p>
+        </div>
+
+        <!-- ================= SCREEN 2: ACTIVE QUIZ ================= -->
+        <div id="screen-quiz" class="hidden space-y-6">
+            
+            <!-- Quiz Header Status Bar -->
+            <div class="flex items-center justify-between border-b-4 border-[#4e3422] pb-4">
+                <!-- Hearts (Representing Hardcore mode single life) -->
+                <div class="flex items-center space-x-2">
+                    <span class="pixel-font text-[10px] text-[#ff5555] mr-1 hidden sm:inline">HP:</span>
+                    <span id="hearts-container">
+                        <!-- Custom Pixel Heart using SVG -->
+                        <svg class="heart inline-block animate-bounce" viewBox="0 0 9 9" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M1 1h2v1H1V1zm5 0h2v1H6V1zM0 2h1v2H0V2zm4 2h1v1H4V4zm4-2h1v2H8V2zM1 6h1v1H1V6zm6 0h1v1H7V6zm-1 1h1v1H6V7zm-2 1h2v1H4V8zm-1-1h1v1H3V7z" fill="#ff5555"/>
+                            <path d="M1 2h2v2H1V2zm5 0h2v2H6V2zm-3 2h3v2H3V4zm-2 2h2v1H1V6zm5 0h2v1H6V6zm-1 1h1v1H5V7zm-2 0h1v1H3V7z" fill="#ff2222"/>
+                            <path d="M2 2h1v1H2V2zm4 0h1v1H6V2z" fill="#ff8888"/>
+                        </svg>
+                    </span>
+                    <span class="pixel-font text-[9px] text-[#ff5555]">HARDCORE</span>
+                </div>
+
+                <!-- Score / Level Tracker -->
+                <div class="text-right">
+                    <span class="pixel-font text-xs text-[#ffff55]" id="level-indicator">Level: 1/10</span>
+                </div>
+            </div>
+
+            <!-- Funny Reaction Box -->
+            <div id="narrator-bubble" class="bg-[#120b0a] p-3 border-2 border-[#5555ff] text-font text-base text-[#55ffff] text-center italic">
+                "Entering the scary biome. Choose your answers wisely!"
+            </div>
+
+            <!-- Question Box -->
+            <div class="py-4">
+                <p id="question-text" class="pixel-font text-xs sm:text-sm md:text-base text-white leading-relaxed text-center">
+                    Loading question...
+                </p>
+            </div>
+
+            <!-- Answers Block -->
+            <div id="options-container" class="space-y-3">
+                <!-- Dynamically populated buttons -->
+            </div>
+
+            <!-- XP / Progress Bar representing quiz completion -->
+            <div class="space-y-1">
+                <div class="flex justify-between text-[10px] pixel-font text-[#55ff55]">
+                    <span>XP PROGRESS</span>
+                    <span id="xp-percentage">0%</span>
+                </div>
+                <div class="w-full xp-bar-bg h-6 p-1">
+                    <div id="xp-fill" class="h-full xp-bar-fill transition-all duration-300" style="width: 0%"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= SCREEN 3: GAME OVER (DEATH SCREEN) ================= -->
+        <div id="screen-death" class="hidden text-center space-y-6 py-4">
+            <h1 class="pixel-font text-3xl md:text-5xl text-[#ff5555] tracking-wider font-bold uppercase drop-shadow-[5px_5px_0px_#3a0000] animate-bounce">
+                You Died!
+            </h1>
+
+            <!-- Steve skull / block representation -->
+            <div class="flex justify-center my-2">
+                <div class="w-20 h-20 bg-[#2b1a13] mc-border border-red-700 flex items-center justify-center p-1 relative">
+                    <!-- Custom SVG Grim Creeper Face / Skull -->
+                    <svg class="w-16 h-16" viewBox="0 0 8 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="8" height="8" fill="#551111"/>
+                        <rect x="1" y="2" width="2" height="2" fill="#110000"/>
+                        <rect x="5" y="2" width="2" height="2" fill="#110000"/>
+                        <rect x="3" y="4" width="2" height="2" fill="#110000"/>
+                        <rect x="2" y="5" width="4" height="2" fill="#110000"/>
+                        <rect x="2" y="7" width="1" height="1" fill="#110000"/>
+                        <rect x="5" y="7" width="1" height="1" fill="#110000"/>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Custom Death Message -->
+            <div class="bg-black/60 p-4 mc-border border-red-900 rounded">
+                <p id="death-msg" class="pixel-font text-xs md:text-sm text-[#e59494] leading-relaxed">
+                    Steve stood too close to the quiz and exploded.
+                </p>
+                <p class="text-font text-lg text-yellow-500 mt-2" id="death-level">
+                    Score: Level 0 reached before meeting doom.
+                </p>
+            </div>
+
+            <div class="space-y-3">
+                <!-- Respawn Button (Restarts game) -->
+                <button onclick="startGame()" class="w-full mc-btn mc-btn-red py-4 pixel-font text-sm text-white cursor-pointer tracking-wider">
+                    RESPAWN
+                </button>
+                
+                <!-- Back to Main Menu -->
+                <button onclick="goToMainMenu()" class="w-full mc-btn py-3 pixel-font text-xs text-white cursor-pointer">
+                    MAIN MENU
+                </button>
+            </div>
+        </div>
+
+        <!-- ================= SCREEN 4: VICTORY SCREEN ================= -->
+        <div id="screen-victory" class="hidden text-center space-y-6 py-6">
+            <!-- Sparkle Anchor -->
+            <div id="victory-sparkles" class="absolute inset-0 overflow-hidden pointer-events-none"></div>
+
+            <h1 class="pixel-font text-3xl md:text-4xl text-[#ffff55] tracking-widest font-bold uppercase drop-shadow-[4px_4px_0px_#444400]">
+                🏆 VICTORY!
+            </h1>
+            <p class="pixel-font text-[10px] md:text-xs text-[#55ff55]">
+                YOU SURVIVED HARDCORE MODE!
+            </p>
+
+            <div class="flex justify-center my-4">
+                <div class="w-24 h-24 bg-[#3c2a21] mc-border border-yellow-500 flex items-center justify-center p-2 relative">
+                    <!-- Minecraft Golden Crown Trophy SVG -->
+                    <svg class="w-16 h-16 animate-bounce" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M2 12h12v2H2z" fill="#ffaa00"/>
+                        <path d="M4 10h8v2H4z" fill="#ffaa00"/>
+                        <path d="M5 8h6v2H5z" fill="#ffff55"/>
+                        <path d="M3 4h2v4H3zM11 4h2v4h-2zM7 3h2v5H7z" fill="#ffff55"/>
+                        <path d="M1 3h2v1H1zM13 3h2v1h-2zM6 2h1v1H6zm3 0h1v1H9z" fill="#ffffff"/>
+                    </svg>
+                </div>
+            </div>
+
+            <div class="bg-[#1c2c10] p-5 mc-border border-green-800 text-left text-font text-lg md:text-xl space-y-2">
+                <p class="text-[#ffff55] font-bold">Game Stats:</p>
+                <p>👤 Player: <span id="victory-user" class="text-white">Steve</span></p>
+                <p>🏹 Hearts remaining: <span class="text-red-500">❤️ FULL (Unscratched)</span></p>
+                <p>🧪 Knowledge Rank: <span class="text-[#55ffff]">Redstone Arch-Mage</span></p>
+            </div>
+
+            <div class="bg-[#241c18] p-3 text-[10px] sm:text-xs text-[#ffaa00] pixel-font">
+                🏆 "You survived the tests and did not sleep in the Nether!" 🏆
+            </div>
+
+            <div class="space-y-3">
+                <button onclick="startGame()" class="w-full mc-btn mc-btn-green py-4 pixel-font text-sm text-white tracking-wide cursor-pointer">
+                    PLAY AGAIN
+                </button>
+                <button onclick="goToMainMenu()" class="w-full mc-btn py-3 pixel-font text-xs text-white cursor-pointer">
+                    TITLE SCREEN
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Clipboard Copied Alert Toast -->
+    <div id="toast" class="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-black/90 mc-border border-gray-600 px-4 py-2 text-xs pixel-font text-[#55ff55] opacity-0 pointer-events-none transition-opacity duration-300 z-50">
+        Results copied!
+    </div>
+
+    <!-- Sound & Game Engines Code -->
+    <script>
+        // --- 50 MINECRAFT QUESTIONS POOL ---
+        const QUESTIONS_POOL = [
+            {
+                q: "What happens if you try to sleep in a comfy bed in the Nether?",
+                options: [
+                    { text: "You set your spawn point.", isCorrect: false },
+                    { text: "You instantly explode spectacularly.", isCorrect: true },
+                    { text: "A Ghast tucks you in.", isCorrect: false }
+                ],
+                joke: "A very explosive nap indeed!"
+            },
+            {
+                q: "What is Rule #1 of Minecraft survival?",
+                options: [
+                    { text: "Never dig straight down.", isCorrect: true },
+                    { text: "Always hug Creepers.", isCorrect: false },
+                    { text: "Keep all your diamonds in lava.", isCorrect: false }
+                ],
+                joke: "Unless you fancy a swim in molten lava."
+            },
+            {
+                q: "What are Creepers absolutely terrified of?",
+                options: [
+                    { text: "Water buckets.", isCorrect: false },
+                    { text: "Cats and Ocelots.", isCorrect: true },
+                    { text: "Tax collectors.", isCorrect: false }
+                ],
+                joke: "They run away faster than you can say 'Meow'!"
+            },
+            {
+                q: "How do you tame a standard Wolf to make it your best friend?",
+                options: [
+                    { text: "Bribe them with delicious bones.", isCorrect: true },
+                    { text: "Throw a stick at their head.", isCorrect: false },
+                    { text: "Feed them a whole cake.", isCorrect: false }
+                ],
+                joke: "Who's a good boy? The one with the bones."
+            },
+            {
+                q: "What will happen if you look directly into an Enderman's eyes?",
+                options: [
+                    { text: "He blushes and drops a diamond.", isCorrect: false },
+                    { text: "He gets aggressively angry and tries to hug you to death.", isCorrect: true },
+                    { text: "He sings a gentle lullaby.", isCorrect: false }
+                ],
+                joke: "Staring contests with tall purple-eyed boys are hazardous."
+            },
+            {
+                q: "What tool must you use to successfully mine Obsidian?",
+                options: [
+                    { text: "A Diamond or Netherite Pickaxe.", isCorrect: true },
+                    { text: "Your bare, heroic, bleeding fists.", isCorrect: false },
+                    { text: "A golden shovel because it's fancy.", isCorrect: false }
+                ],
+                joke: "Obsidian does not care about your feelings or your iron pick."
+            },
+            {
+                q: "What happens when you name a sheep 'jeb_' using a name tag?",
+                options: [
+                    { text: "It cycles through rainbow colors.", isCorrect: true },
+                    { text: "It starts flying.", isCorrect: false },
+                    { text: "It turns upside down.", isCorrect: false }
+                ],
+                joke: "Disco sheep engaged!"
+            },
+            {
+                q: "And what happens when you name any mob 'Dinnerbone'?",
+                options: [
+                    { text: "It spins in circles.", isCorrect: false },
+                    { text: "It turns completely upside down.", isCorrect: true },
+                    { text: "It drops cooked steaks.", isCorrect: false }
+                ],
+                joke: "A different perspective on gravity!"
+            },
+            {
+                q: "What is the ultimate defense against a fall from 200 blocks high?",
+                options: [
+                    { text: "Screaming in real life.", isCorrect: false },
+                    { text: "A well-timed bucket of water at your feet.", isCorrect: true },
+                    { text: "Praying for feather falling zero.", isCorrect: false }
+                ],
+                joke: "The legendary MLG Water Bucket save!"
+            },
+            {
+                q: "Why do experienced miners wear gold armor in the Nether?",
+                options: [
+                    { text: "To stop Piglins from turning them into kebab.", isCorrect: true },
+                    { text: "To look extremely stylish for Ghasts.", isCorrect: false },
+                    { text: "It makes them immune to fire.", isCorrect: false }
+                ],
+                joke: "Safety first. Fashion second."
+            },
+            {
+                q: "How many heads does the spooky summonable Wither have?",
+                options: [
+                    { text: "3 heads.", isCorrect: true },
+                    { text: "2 heads, but one is shy.", isCorrect: false },
+                    { text: "1 giant skull head.", isCorrect: false }
+                ],
+                joke: "Three times the explosive sass."
+            },
+            {
+                q: "What do Phantoms do if you refuse to sleep for 3 days straight?",
+                options: [
+                    { text: "Dive-bomb you from the sky.", isCorrect: true },
+                    { text: "Give you coffee.", isCorrect: false },
+                    { text: "Steal your bed.", isCorrect: false }
+                ],
+                joke: "Insomnia's natural predator."
+            },
+            {
+                q: "What do you get when you feed a cookie to a beautiful Parrot?",
+                options: [
+                    { text: "It sings a pop song.", isCorrect: false },
+                    { text: "It instantly dies (chocolate is toxic!).", isCorrect: true },
+                    { text: "It grows into a giant rideable bird.", isCorrect: false }
+                ],
+                joke: "NEVER feed chocolate to real birds either!"
+            },
+            {
+                q: "Where do you find the annoying silverfish pests?",
+                options: [
+                    { text: "In infested blocks near strongholds.", isCorrect: true },
+                    { text: "In high-fashion water rivers.", isCorrect: false },
+                    { text: "Inside chests in villages.", isCorrect: false }
+                ],
+                joke: "The worst surprise during a mining trip!"
+            },
+            {
+                q: "What is a bucket of milk mostly used for by adventurers?",
+                options: [
+                    { text: "Making giant cheese wheels.", isCorrect: false },
+                    { text: "Instantly curing all potion effects and bad vibes.", isCorrect: true },
+                    { text: "Calming angry Endermen.", isCorrect: false }
+                ],
+                joke: "Clears up poison, mining fatigue, and existential dread."
+            },
+            {
+                q: "What occurs if you accidentally slap an Iron Golem in a village?",
+                options: [
+                    { text: "He offers you a friendly poppy.", isCorrect: false },
+                    { text: "He yeets you into the stratosphere.", isCorrect: true },
+                    { text: "He starts crying silently.", isCorrect: false }
+                ],
+                joke: "You picked the wrong neighborhood, Steve."
+            },
+            {
+                q: "What is the Ender Dragon's official canonical name?",
+                options: [
+                    { text: "Jean?", isCorrect: true },
+                    { text: "Elizabeth III", isCorrect: false },
+                    { text: "Bob the Scaly", isCorrect: false }
+                ],
+                joke: "Yes! The Ender Dragon is canonically female and named 'Jean?'."
+            },
+            {
+                q: "What projectile weapon do Drowned zombies throw at you?",
+                options: [
+                    { text: "Spit bubbles.", isCorrect: false },
+                    { text: "Tridents of Poseidon.", isCorrect: true },
+                    { text: "Stinky wet sponges.", isCorrect: false }
+                ],
+                joke: "Beware the underwater fork-throwers!"
+            },
+            {
+                q: "How do angry llamas defend themselves from bullies?",
+                options: [
+                    { text: "Spitting with absolute disrespect.", isCorrect: true },
+                    { text: "Using standard high-kicks.", isCorrect: false },
+                    { text: "Summoning mini-wolves.", isCorrect: false }
+                ],
+                joke: "Emotional and physical spit damage."
+            },
+            {
+                q: "What is widely considered the absolute best use for a Wandering Trader?",
+                options: [
+                    { text: "Acquiring valuable saplings.", isCorrect: false },
+                    { text: "Free leads and leather.", isCorrect: true },
+                    { text: "Having deep philosophical conversations.", isCorrect: false }
+                ],
+                joke: "The llamas must be freed, and we need leads!"
+            },
+            {
+                q: "What status effect do you get when hit by a Shulker's bullet?",
+                options: [
+                    { text: "Levitation (floating into the roof).", isCorrect: true },
+                    { text: "Extreme heaviness.", isCorrect: false },
+                    { text: "A sudden desire to dance.", isCorrect: false }
+                ],
+                joke: "Up, up, and away!"
+            },
+            {
+                q: "What materials do you need to craft Netherite ingots?",
+                options: [
+                    { text: "Ancient Debris and Diamonds.", isCorrect: false },
+                    { text: "Netherite Scraps and Gold Ingots.", isCorrect: true },
+                    { text: "Obsidian and magma cream.", isCorrect: false }
+                ],
+                joke: "Precious metals combined for maximum protection."
+            },
+            {
+                q: "Where can you craft a Saddle in the crafting table?",
+                options: [
+                    { text: "You cannot craft a saddle; you must find one.", isCorrect: true },
+                    { text: "With 3 leather and 2 iron bars.", isCorrect: false },
+                    { text: "Surrounding a string with red wool.", isCorrect: false }
+                ],
+                joke: "No recipes allowed! Raid those dungeons instead."
+            },
+            {
+                q: "What clever trick do Axolotls do when they take heavy damage?",
+                options: [
+                    { text: "Play dead to regenerate health.", isCorrect: true },
+                    { text: "Call their angry mother.", isCorrect: false },
+                    { text: "Explode like mini-bombs.", isCorrect: false }
+                ],
+                joke: "Oscar-level acting for underwater survivors."
+            },
+            {
+                q: "What happens if you dare to eat a raw Pufferfish?",
+                options: [
+                    { text: "You get extreme poison, hunger, and nausea.", isCorrect: true },
+                    { text: "You inflate to double your size.", isCorrect: false },
+                    { text: "You grow gills and swim faster.", isCorrect: false }
+                ],
+                joke: "Spiky, toxic, and absolutely not delicious."
+            },
+            {
+                q: "What happens to a Snow Golem when it steps into a desert biome?",
+                options: [
+                    { text: "It puts on cool sunglasses.", isCorrect: false },
+                    { text: "It melts away and dies of heat.", isCorrect: true },
+                    { text: "It turns into a Sand Golem.", isCorrect: false }
+                ],
+                joke: "Physics works, even in blocks."
+            },
+            {
+                q: "Why are Baby Zombies feared above almost all other mobs?",
+                options: [
+                    { text: "They are incredibly fast with tiny hitboxes.", isCorrect: true },
+                    { text: "They steal your armor and laugh at you.", isCorrect: false },
+                    { text: "They summon their parents.", isCorrect: false }
+                ],
+                joke: "Absolute pint-sized terrors."
+            },
+            {
+                q: "What is the most fuel-efficient item in a furnace?",
+                options: [
+                    { text: "A block of coal.", isCorrect: false },
+                    { text: "A full Lava Bucket.", isCorrect: true },
+                    { text: "100 wooden buttons.", isCorrect: false }
+                ],
+                joke: "100 smelts per bucket. Don't lose the empty bucket!"
+            },
+            {
+                q: "What magic item protects you from dying when held in your hand?",
+                options: [
+                    { text: "The Totem of Undying.", isCorrect: true },
+                    { text: "A golden apple on a stick.", isCorrect: false },
+                    { text: "An Enchanted Book of Protection.", isCorrect: false }
+                ],
+                joke: "Hold it tight and cheat death!"
+            },
+            {
+                q: "What happens to a normal bee after it stings you?",
+                options: [
+                    { text: "It turns into a giant super-bee.", isCorrect: false },
+                    { text: "It loses its stinger and dies soon after.", isCorrect: true },
+                    { text: "It calls other bees to laugh at you.", isCorrect: false }
+                ],
+                joke: "A tragic end for a sweet insect."
+            },
+            {
+                q: "What block is created when water flows over a lava SOURCE block?",
+                options: [
+                    { text: "Cobblestone.", isCorrect: false },
+                    { text: "Obsidian.", isCorrect: true },
+                    { text: "Stone.", isCorrect: false }
+                ],
+                joke: "Source is key! Redstone engineers know this."
+            },
+            {
+                q: "How can you get a parrot to sit comfortably on your shoulder?",
+                options: [
+                    { text: "Walk up to it and tame it with seeds.", isCorrect: true },
+                    { text: "Craft a special bird leash.", isCorrect: false },
+                    { text: "Bribe it with gold nuggets.", isCorrect: false }
+                ],
+                joke: "Tamed parrots make excellent, noisy accessories."
+            },
+            {
+                q: "Which record disc is famously known to contain creepy, horror sounds?",
+                options: [
+                    { text: "Disc 11.", isCorrect: true },
+                    { text: "Disc Cat.", isCorrect: false },
+                    { text: "Disc Pigstep.", isCorrect: false }
+                ],
+                joke: "Play it in the dark if you want to lose sleep."
+            },
+            {
+                q: "What happens to a Creeper if it is struck by lightning?",
+                options: [
+                    { text: "It disintegrates into gunpowder.", isCorrect: false },
+                    { text: "It becomes a Charged Creeper with double explosion size.", isCorrect: true },
+                    { text: "It turns into a passive pig.", isCorrect: false }
+                ],
+                joke: "Supercharged devastation!"
+            },
+            {
+                q: "What is the only block in Survival mode that cannot be mined?",
+                options: [
+                    { text: "Netherite blocks.", isCorrect: false },
+                    { text: "Bedrock.", isCorrect: true },
+                    { text: "Crysteel.", isCorrect: false }
+                ],
+                joke: "The ultimate unbreakable floor."
+            },
+            {
+                q: "What sound source did Mojang use to create the eerie Ghast cries?",
+                options: [
+                    { text: "A synthesizer on a low battery.", isCorrect: false },
+                    { text: "A developer's sleeping cat.", isCorrect: true },
+                    { text: "A rusty door hinge.", isCorrect: false }
+                ],
+                joke: "Specifically, C418's cat waking up from a nap!"
+            },
+            {
+                q: "What is a Zoglin?",
+                options: [
+                    { text: "A Hoglin that stayed in the Overworld too long and decayed.", isCorrect: true },
+                    { text: "A zombie villager variant.", isCorrect: false },
+                    { text: "A mix between a zombie and a piglin.", isCorrect: false }
+                ],
+                joke: "Angry, undead, and ready to ram."
+            },
+            {
+                q: "What occurs if you throw items into fire or lava?",
+                options: [
+                    { text: "They usually burn up, unless they are made of Netherite.", isCorrect: true },
+                    { text: "They are sent to a secret storage dimension.", isCorrect: false },
+                    { text: "They create a small firework show.", isCorrect: false }
+                ],
+                joke: "Netherite is heatproof, everything else is toast."
+            },
+            {
+                q: "How do you activate a Nether Portal?",
+                options: [
+                    { text: "Strike it with Flint and Steel inside the frame.", isCorrect: true },
+                    { text: "Throw a diamond at it.", isCorrect: false },
+                    { text: "Whisper secrets to the obsidian blocks.", isCorrect: false }
+                ],
+                joke: "Light it up and step into the fire."
+            },
+            {
+                q: "What do you need to breed two Axolotls?",
+                options: [
+                    { text: "Buckets of Tropical Fish.", isCorrect: true },
+                    { text: "Raw Salmon.", isCorrect: false },
+                    { text: "Kelp cubes.", isCorrect: false }
+                ],
+                joke: "A very specific appetite for colorful fish."
+            },
+            {
+                q: "What happens if a pig is struck by lightning?",
+                options: [
+                    { text: "It turns into a Zombified Piglin.", isCorrect: true },
+                    { text: "It turns into cooked porkchops.", isCorrect: false },
+                    { text: "It gains wings.", isCorrect: false }
+                ],
+                joke: "Nature's undead alchemy."
+            },
+            {
+                q: "What block allows you to bounce high into the air?",
+                options: [
+                    { text: "Slime Block.", isCorrect: true },
+                    { text: "Honey Block.", isCorrect: false },
+                    { text: "Wool Block.", isCorrect: false }
+                ],
+                joke: "Bouncing high like a trampoline!"
+            },
+            {
+                q: "Which villager profession wears a fancy purple robe?",
+                options: [
+                    { text: "Cleric.", isCorrect: true },
+                    { text: "Farmer.", isCorrect: false },
+                    { text: "Weaponsmith.", isCorrect: false }
+                ],
+                joke: "They sell Ender Pearls and redstone."
+            },
+            {
+                q: "What is the name of the redstone expert YouTuber with the mustache?",
+                options: [
+                    { text: "Mumbo Jumbo.", isCorrect: true },
+                    { text: "PewDiePie.", isCorrect: false },
+                    { text: "Dream.", isCorrect: false }
+                ],
+                joke: "It's quite simple, really!"
+            },
+            {
+                q: "What block is used to craft a classic iron golem?",
+                options: [
+                    { text: "4 Iron Blocks and a Pumpkin/Carved Pumpkin.", isCorrect: true },
+                    { text: "9 Iron Ingots and a skull.", isCorrect: false },
+                    { text: "An anvil on a stone block.", isCorrect: false }
+                ],
+                joke: "Pumpkin power, activate!"
+            },
+            {
+                q: "How do you cure a Zombie Villager?",
+                options: [
+                    { text: "Splash them with Weakness potion, then feed a Golden Apple.", isCorrect: true },
+                    { text: "Feed them rotten flesh.", isCorrect: false },
+                    { text: "Hit them with a healing splash potion.", isCorrect: false }
+                ],
+                joke: "Back to trading and complaining!"
+            },
+            {
+                q: "How many obsidian blocks are needed to build a minimum functional portal?",
+                options: [
+                    { text: "10 blocks (skipping corners).", isCorrect: true },
+                    { text: "14 blocks (full frame).", isCorrect: false },
+                    { text: "12 blocks.", isCorrect: false }
+                ],
+                joke: "Save your diamond pickaxe durable, skip those corners!"
+            },
+            {
+                q: "What does the 'Respiration' enchantment do?",
+                options: [
+                    { text: "Allows you to breathe longer underwater.", isCorrect: true },
+                    { text: "Makes you run faster in the wind.", isCorrect: false },
+                    { text: "Improves your stamina.", isCorrect: false }
+                ],
+                joke: "Gills made of magic."
+            },
+            {
+                q: "Which update famously featured the 'Removal of Herobrine'?",
+                options: [
+                    { text: "Almost every major update patch notes.", isCorrect: true },
+                    { text: "Only Beta 1.8.", isCorrect: false },
+                    { text: "None, he is still out there watching.", isCorrect: false }
+                ],
+                joke: "He's always removed, but never truly gone."
+            },
+            {
+                q: "What block glows underwater and is found in ocean monuments?",
+                options: [
+                    { text: "Sea Lantern.", isCorrect: true },
+                    { text: "Glowstone.", isCorrect: false },
+                    { text: "Jack-O-Lantern.", isCorrect: false }
+                ],
+                joke: "Beautiful aquatic illumination."
+            }
+        ];
+
+        // --- FUNNY DEATH MESSAGES ---
+        const DEATH_MESSAGES = [
+            "[User] was blown up by a wrong answer.",
+            "[User] tried to swim in lava while thinking.",
+            "[User] fell from a high place trying to look smart.",
+            "[User] was squashed by a falling anvil of trivia.",
+            "[User] fell out of the world during question [Q].",
+            "[User] was slain by an angry quiz narrator.",
+            "[User] choked on a bad answer.",
+            "[User] discovered that sleeping in the quiz Nether is dangerous.",
+            "[User] looked directly at an Enderman's incorrect option.",
+            "[User] was poked to death by a baby zombie's question."
+        ];
+
+        // --- GAME STATE ---
+        let currentQuestions = [];
+        let currentIndex = 0;
+        let username = "Steve";
+        let isMuted = false;
+
+        // --- RETRO SOUND SYNTHESIZER (Web Audio API) ---
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playSound(type) {
+            if (isMuted) return;
+            
+            // Resume context if suspended (browser security)
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            if (type === 'click') {
+                // Quick retro click
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(80, audioCtx.currentTime + 0.1);
+                gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.1);
+            } 
+            else if (type === 'correct') {
+                // Classic retro level up ding
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
+                osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.08); // E5
+                osc.frequency.setValueAtTime(783.99, audioCtx.currentTime + 0.16); // G5
+                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.45);
+            } 
+            else if (type === 'death') {
+                // Retro classic Oof! + Explosion noise
+                // Part 1: Classic Oof pitched down
+                const oscOof = audioCtx.createOscillator();
+                const gainOof = audioCtx.createGain();
+                oscOof.connect(gainOof);
+                gainOof.connect(audioCtx.destination);
+                
+                oscOof.type = 'sawtooth';
+                oscOof.frequency.setValueAtTime(130, audioCtx.currentTime);
+                oscOof.frequency.linearRampToValueAtTime(65, audioCtx.currentTime + 0.15);
+                gainOof.gain.setValueAtTime(0.25, audioCtx.currentTime);
+                gainOof.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.25);
+                oscOof.start();
+                oscOof.stop(audioCtx.currentTime + 0.3);
+
+                // Part 2: Explosion rumbling
+                setTimeout(() => {
+                    const oscExpl = audioCtx.createOscillator();
+                    const gainExpl = audioCtx.createGain();
+                    oscExpl.connect(gainExpl);
+                    gainExpl.connect(audioCtx.destination);
+                    
+                    oscExpl.type = 'sawtooth';
+                    oscExpl.frequency.setValueAtTime(80, audioCtx.currentTime);
+                    oscExpl.frequency.exponentialRampToValueAtTime(30, audioCtx.currentTime + 0.5);
+                    gainExpl.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                    gainExpl.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.6);
+                    oscExpl.start();
+                    oscExpl.stop(audioCtx.currentTime + 0.6);
+                }, 100);
+            }
+            else if (type === 'victory') {
+                // Classic happy level up fanfare
+                const notes = [261.63, 329.63, 392.00, 523.25, 659.25, 783.99, 1046.50];
+                notes.forEach((freq, idx) => {
+                    setTimeout(() => {
+                        const o = audioCtx.createOscillator();
+                        const g = audioCtx.createGain();
+                        o.connect(g);
+                        g.connect(audioCtx.destination);
+                        o.type = 'triangle';
+                        o.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                        g.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                        g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                        o.start();
+                        o.stop(audioCtx.currentTime + 0.35);
+                    }, idx * 100);
+                });
+            }
+        }
+
+        function toggleMute() {
+            isMuted = !isMuted;
+            document.getElementById('mute-icon').innerText = isMuted ? "🔇 SOUND OFF" : "🔊 SOUND ON";
+        }
+
+        // --- UTILS: Shuffle Array ---
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        // --- GAME FLOW NAVIGATION ---
+        function showScreen(screenId) {
+            // Hide all screens
+            document.getElementById('screen-welcome').classList.add('hidden');
+            document.getElementById('screen-quiz').classList.add('hidden');
+            document.getElementById('screen-death').classList.add('hidden');
+            document.getElementById('screen-victory').classList.add('hidden');
+            
+            // Show requested screen
+            document.getElementById(screenId).classList.remove('hidden');
+
+            // Set screen-specific body layouts
+            document.body.classList.remove('death-overlay');
+            if (screenId === 'screen-death') {
+                document.body.classList.add('death-overlay');
+            }
+        }
+
+        function goToMainMenu() {
+            playSound('click');
+            showScreen('screen-welcome');
+        }
+
+        // --- GAME OPERATIONS ---
+        function startGame() {
+            playSound('click');
+            
+            // Read and clean username
+            const nameInput = document.getElementById('username').value.trim();
+            username = nameInput !== "" ? nameInput : "Steve";
+
+            // Draw 10 random questions from our massive pool of 50
+            const shuffledPool = shuffleArray([...QUESTIONS_POOL]);
+            currentQuestions = shuffledPool.slice(0, 10);
+            
+            currentIndex = 0;
+
+            // Setup UI
+            showScreen('screen-quiz');
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            if (currentIndex >= currentQuestions.length) {
+                triggerVictory();
+                return;
+            }
+
+            const currentQ = currentQuestions[currentIndex];
+            
+            // Set stats
+            document.getElementById('level-indicator').innerText = `Level: ${currentIndex + 1}/10`;
+            document.getElementById('question-text').innerText = currentQ.q;
+            
+            // Randomly update narrator bubble for immersive Minecraft commentary
+            const commentaries = [
+                `"Keep your eyes open, ${username}."`,
+                `"Watch out for Creepers!"`,
+                `"Who left this chest unlocked?"`,
+                `"Don't worry, the sand won't suffocate you here."`,
+                `"Is that a cave noise?"`,
+                `"Your inventory looks full of braincells."`,
+                `"Did you hear a Ghast sigh?"`,
+                `"Looking good in that virtual diamond armor!"`
+            ];
+            const randomMsg = commentaries[Math.floor(Math.random() * commentaries.length)];
+            document.getElementById('narrator-bubble').innerText = randomMsg;
+
+            // Shuffle option positions so correct answer isn't predictable
+            const options = shuffleArray([...currentQ.options]);
+            
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = "";
+
+            options.forEach((opt, index) => {
+                const btn = document.createElement('button');
+                btn.className = "w-full mc-btn py-3 px-4 text-left text-font text-lg md:text-xl text-[#f1f1f1] flex items-center justify-between cursor-pointer";
+                
+                // Index prefix
+                const prefix = index === 0 ? "A" : index === 1 ? "B" : "C";
+                btn.innerHTML = `
+                    <span><span class="pixel-font text-xs text-yellow-400 mr-2">[${prefix}]</span> ${opt.text}</span>
+                `;
+                
+                btn.onclick = () => submitAnswer(opt.isCorrect, currentQ.joke);
+                optionsContainer.appendChild(btn);
+            });
+
+            // Update Progress Bar
+            const percentage = (currentIndex / 10) * 100;
+            document.getElementById('xp-fill').style.width = `${percentage}%`;
+            document.getElementById('xp-percentage').innerText = `${Math.round(percentage)}%`;
+        }
+
+        function submitAnswer(isCorrect, jokeMsg) {
+            const container = document.getElementById('game-card');
+
+            if (isCorrect) {
+                playSound('correct');
+                currentIndex++;
+                
+                // Flash success/glow effect momentarily
+                container.classList.add('border-green-500');
+                setTimeout(() => container.classList.remove('border-green-500'), 300);
+
+                loadQuestion();
+            } else {
+                playSound('death');
+                
+                // Screen shake animation
+                container.classList.add('shake');
+                setTimeout(() => container.classList.remove('shake'), 400);
+
+                triggerDeath();
+            }
+        }
+
+        function triggerDeath() {
+            // Build custom funny death message
+            let randomTombstone = DEATH_MESSAGES[Math.floor(Math.random() * DEATH_MESSAGES.length)];
+            randomTombstone = randomTombstone.replace("[User]", username);
+            randomTombstone = randomTombstone.replace("[Q]", (currentIndex + 1).toString());
+
+            document.getElementById('death-msg').innerText = randomTombstone;
+            document.getElementById('death-level').innerText = `Defeated on Level ${currentIndex + 1} of 10.`;
+
+            showScreen('screen-death');
+        }
+
+        function triggerVictory() {
+            playSound('victory');
+            
+            // Set victory details
+            document.getElementById('victory-user').innerText = username;
+            
+            showScreen('screen-victory');
+            
+            // Generate festive particles
+            spawnParticles();
+        }
+
+        // --- SPARKLE VFX GENERATOR ---
+        function spawnParticles() {
+            const container = document.getElementById('victory-sparkles');
+            container.innerHTML = "";
+            for (let i = 0; i < 40; i++) {
+                const p = document.createElement('div');
+                p.className = 'sparkle';
+                p.style.left = `${Math.random() * 100}%`;
+                p.style.top = `${Math.random() * 100}%`;
+                p.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 70%)`;
+                p.style.animationDelay = `${Math.random() * 2}s`;
+                container.appendChild(p);
+            }
+        }
+    </script>
+</body>
+</html>
